@@ -1,5 +1,4 @@
-// FIX THE SHOW TODOS FUNCTION!!!!!!!!!!
-// Implement a plan on how you're going to do this.
+
 
 #include <iostream>
 #include <vector>
@@ -55,7 +54,7 @@ int main()
             todosIds[todoLength] = todoLength + 1;
             todosNames[todoLength] = newTodo;
             todoLength += 1;
-            showTodos(todosIds, todosNames, todoLength);
+            showTodos(todosIds, todosNames, todoLength); // This isnt being executed
         }
         else
         {
