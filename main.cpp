@@ -1,17 +1,16 @@
 #include <iostream>
-#include <vector>
 #include <string>
-#include <array>
 
 using namespace std;
 
 const int maxTodos = 8;
-int todosIds[] = {};
-string todosNames[] = {};
+int todosIds[maxTodos] = {};
+string todosNames[maxTodos] = {};
+int todoLength = 0;
 
-void showTodos(int todosIds[], string todosNames[], int length)
+void showTodos()
 {
-    if (length < 1)
+    if (todoLength < 1)
     {
         cout << "No todos tasks. \n";
         return;
@@ -19,24 +18,66 @@ void showTodos(int todosIds[], string todosNames[], int length)
 
     cout << "Todos Tasks \n";
 
-    for (int i = 0; i < length; i++)
+    for (int i = 0; i < todoLength; i++)
     {
         const string todoTask = todosNames[i];
         const int todoId = todosIds[i];
-        cout << (todoId) << ". " << todoTask << "\n";
+        cout << (todoId == 0 ? 1 : todoId) << ". " << todoTask << "\n";
     }
 }
 
-string responseTask()
+int responseTask()
 {
-    cout
-        << "Do you want to add a new todo? (Y/N): ";
-    string response;
+    cout << "\n\nWrite down what you want to do\nAdd Task - 1\nRemove Task - 2\nUpdate Task - 3\nExit Todo Manager - 4\nResponse: ";
+    int response;
     cin >> response;
     return response;
 }
 
-void addTask(int todosIds[], string todosNames[], int todoLength)
+int findTodoIndex(int queryId)
+{
+    for (int i = 0; i < todoLength; i++)
+    {
+        if (todosIds[i] == queryId)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void updateTask()
+{
+    if (todoLength < 1)
+    {
+        return;
+    }
+    int todoId;
+    string newTodoName;
+
+    cout << "Write down the ID of the TODO: ";
+    cin >> todoId;
+
+    cin.ignore();
+
+    cout << "Write down the new Todo-Task (name): ";
+    getline(cin, newTodoName);
+
+    int elementID = findTodoIndex(todoId);
+
+    if (elementID != -1)
+    {
+        todosNames[elementID] = newTodoName;
+
+        cout << "Todo updated successfully.\n";
+    }
+    else
+    {
+        cout << "Todo not found.\n";
+    }
+}
+
+void addTask()
 {
     if (todoLength < maxTodos)
     {
@@ -45,10 +86,9 @@ void addTask(int todosIds[], string todosNames[], int todoLength)
         cin.ignore();
         getline(cin, newTodo);
 
-        todosIds[todoLength + 1] = todoLength + 1;
-        todosNames[todoLength + 1] = newTodo;
+        todosIds[todoLength] = todoLength + 1;
+        todosNames[todoLength] = newTodo;
         todoLength += 1;
-        showTodos(todosIds, todosNames, todoLength); // This isnt being executed
     }
     else
     {
@@ -56,22 +96,68 @@ void addTask(int todosIds[], string todosNames[], int todoLength)
     }
 }
 
+void removeTask()
+{
+    if (todoLength < 1)
+    {
+        return;
+    }
+    cout << "Write down the ID of the TODO: ";
+    int todoId;
+    cin >> todoId;
+    int elementID = findTodoIndex(todoId);
+
+    if (elementID != -1)
+    {
+        for (int i = elementID; i < todoLength - 1; i++)
+        {
+            todosIds[i] = todosIds[i + 1];
+            todosNames[i] = todosNames[i + 1];
+        }
+
+        todoLength--;
+
+        cout << "Todo removed successfully.\n";
+    }
+    else
+    {
+        cout << "Todo not found.\n";
+    }
+}
+
 int main()
 {
-    int todoLength = sizeof(todosIds) / sizeof(int);
     bool keepRunning = true;
 
-    showTodos(todosIds, todosNames, todoLength);
+    showTodos();
 
     while (keepRunning)
     {
-        string response = responseTask();
-        if (response == "n" || response == "N")
+        int response = responseTask();
+
+        if (response == 1)
+        {
+            addTask();
+            showTodos();
+        }
+        else if (response == 2)
+        {
+            removeTask();
+            showTodos();
+        }
+        else if (response == 3)
+        {
+            updateTask();
+            showTodos();
+        }
+        else if (response == 4)
         {
             keepRunning = false;
-            break;
         }
-        addTask(todosIds, todosNames, todoLength);
+        else
+        {
+            cout << "Invalid option. Please choose a valid option.\n";
+        }
     }
 
     return 0;
