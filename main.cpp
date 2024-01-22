@@ -1,5 +1,3 @@
-
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,6 +6,8 @@
 using namespace std;
 
 const int maxTodos = 8;
+int todosIds[] = {};
+string todosNames[] = {};
 
 void showTodos(int todosIds[], string todosNames[], int length)
 {
@@ -27,47 +27,51 @@ void showTodos(int todosIds[], string todosNames[], int length)
     }
 }
 
+string responseTask()
+{
+    cout
+        << "Do you want to add a new todo? (Y/N): ";
+    string response;
+    cin >> response;
+    return response;
+}
+
+void addTask(int todosIds[], string todosNames[], int todoLength)
+{
+    if (todoLength < maxTodos)
+    {
+        cout << "Enter the new todo task: ";
+        string newTodo;
+        cin.ignore();
+        getline(cin, newTodo);
+
+        todosIds[todoLength + 1] = todoLength + 1;
+        todosNames[todoLength + 1] = newTodo;
+        todoLength += 1;
+        showTodos(todosIds, todosNames, todoLength); // This isnt being executed
+    }
+    else
+    {
+        cout << "Maximum number of todos reached.\n";
+    }
+}
+
 int main()
 {
-    int todosIds[] = {};
-    string todosNames[] = {};
     int todoLength = sizeof(todosIds) / sizeof(int);
     bool keepRunning = true;
 
     showTodos(todosIds, todosNames, todoLength);
 
-    cout
-        << "Do you want to add a new todo? (Y/N): ";
-    char response;
-    cin >> response;
-
-    if (response == 'Y' || response == 'y')
+    while (keepRunning)
     {
-        if (todoLength < maxTodos)
+        string response = responseTask();
+        if (response == "n" || response == "N")
         {
-            cout << "Enter the new todo task: ";
-            string newTodo;
-            cin.ignore();
-            getline(cin, newTodo);
-
-            cout << "New todo added: " << newTodo << "\n";
-            todosIds[todoLength] = todoLength + 1;
-            todosNames[todoLength] = newTodo;
-            todoLength += 1;
-            showTodos(todosIds, todosNames, todoLength); // This isnt being executed
+            keepRunning = false;
+            break;
         }
-        else
-        {
-            cout << "Maximum number of todos reached.\n";
-        }
-    }
-    else if (response == 'N' || response == 'n')
-    {
-        cout << "Okay bye.\n";
-    }
-    else
-    {
-        cout << "Invalid input.\n";
+        addTask(todosIds, todosNames, todoLength);
     }
 
     return 0;
